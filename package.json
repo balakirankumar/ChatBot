@@ -1,0 +1,20 @@
+{
+  "name": "micro_project_2",
+  "version": "1.0.0",
+  "description": "ChatBot with dialogflow using mongodb and ngrok",
+  "main": "chatBot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "BalaKiranKumar",
+  "license": "ISC",
+  "dependencies": {
+    "actions-on-google": "^2.13.0",
+    "dialogflow-fulfillment": "^0.6.1",
+    "express": "^4.17.1",
+    "mongod": "^2.0.0",
+    "mongodb": "^3.6.3",
+    "nodemon": "^2.0.7",
+    "randomstring": "^1.1.5"
+  }
+}
