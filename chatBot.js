@@ -18,6 +18,7 @@ async function identify_user(agent)
   const name = agent.parameters.phone_number;
   console.log(name);
   const  password= agent.parameters.password;
+  console.log(password);
   const client = new MongoClient(url);
   await client.connect();
   const snap = await client.db("CHATBOT").collection("USERINFO").findOne({"acct_num":name,"password":password});
@@ -33,10 +34,10 @@ async function identify_user(agent)
   await agent.add("Welcome  "+user_name+"!!  \n How can I help you");}
 }
 	
-function report_issue(agent)
+async function report_issue(agent)
 {
  
-  var issue_vals={1:"Internet Down",2:"Slow Internet",3:"Buffering problem",4:"No connectivity"};
+  var issue_vals={1:"Internet Down",2:"Slow Internet",3:"Buffering problem",4:"No connectivity",5:"Sudden Disconnectivity",6:"Drop in speed"};
   
   const intent_val=agent.parameters.number;
   console.log(intent_val)
@@ -61,15 +62,24 @@ function report_issue(agent)
     let year = date_ob.getFullYear();
 
     var time_date=year + "-" + month + "-" + date;
+    if(0<intent_val<=6)
+    {
 
-	var myobj = { username:u_name, issue:issue_val,status:status,time_date:time_date,trouble_ticket:trouble_ticket };
+  	var myobj = { username:u_name, issue:issue_val,status:status,time_date:time_date,trouble_ticket:trouble_ticket };
 
     dbo.collection("STATUS").insertOne(myobj, function(err, res) {
     if (err) throw err;
     db.close();    
   });
+}
  });
- agent.add("The issue reported is: "+ issue_vals[intent_val] +"\nThe ticket number is: "+trouble_ticket);
+ if(intent_val>6 || intent_val<0)
+ {
+ await agent.add("Enter correct Issue number");
+}
+else{
+  agent.add("The issue reported is: "+ issue_vals[intent_val] +"\nThe ticket number is: "+trouble_ticket);
+}
 }
 
 //trying to load rich response
@@ -122,6 +132,32 @@ function custom_payload(agent)
         "type": "list",
         "title": "No connectivity",
         "subtitle": "Press '4' for No connectivity",
+        "event": {
+          "name": "",
+          "languageCode": "",
+          "parameters": {}
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "list",
+        "title": "Sudden Disconnectivity",
+        "subtitle": "Press '5' for Sudden Disconnectivity",
+        "event": {
+          "name": "",
+          "languageCode": "",
+          "parameters": {}
+        }
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "list",
+        "title": "Drop in speed",
+        "subtitle": "Press '6' for drop in speed",
         "event": {
           "name": "",
           "languageCode": "",
