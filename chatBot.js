@@ -16,9 +16,9 @@ app.post("/dialogflow", express.json(), (req, res) => {
 async function identify_user(agent)
 {
   const name = agent.parameters.phone_number;
-  console.log(name);
+  // console.log(name);
   const  password= agent.parameters.password;
-  console.log(password);
+  // console.log(password);
   const client = new MongoClient(url);
   await client.connect();
   const snap = await client.db("CHATBOT").collection("USERINFO").findOne({"acct_num":name,"password":password});
@@ -29,18 +29,23 @@ async function identify_user(agent)
   }
   else
   {
-  user_name=snap.username;
-  console.log(user_name);
-  await agent.add("Welcome  "+user_name+"!!  \n How can I help you");}
+    const count = await client.db("CHATBOT").collection("LOGINCOUNT").findOne({"acct_num":snap.acct_num});
+    console.log(count);
+    const no=count.times;
+    // console.log(no); 
+    await client.db("CHATBOT").collection("LOGINCOUNT").updateOne({"acct_num":snap.acct_num},{$set:{times:no+1}});
+    user_name=snap.username;
+    // console.log(user_name);
+    await agent.add("Welcome  "+user_name+"!!  \n How can I help you");}
 }
 	
-async function report_issue(agent)
+async function report_issue(agent) 
 {
  
   var issue_vals={1:"Internet Down",2:"Slow Internet",3:"Buffering problem",4:"No connectivity",5:"Sudden Disconnectivity",6:"Drop in speed"};
   
   const intent_val=agent.parameters.number;
-  console.log(intent_val)
+  // console.log(intent_val)
   var val=issue_vals[intent_val];
   
   var trouble_ticket=randomstring.generate(7);
@@ -78,7 +83,7 @@ async function report_issue(agent)
  await agent.add("Enter correct Issue number");
 }
 else{
-  agent.add("The issue reported is: "+ issue_vals[intent_val] +"\nThe ticket number is: "+trouble_ticket);
+  agent.add("The issue reported is: "+ issue_vals[intent_val] +"\nThe ticket number is: "+trouble_ticket+"\nMake Note of the ticket number");
 }
 }
 
